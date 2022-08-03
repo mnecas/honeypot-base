@@ -1,4 +1,4 @@
-from honeypot import configuration
+import configuration
 
 import socket
 import threading
