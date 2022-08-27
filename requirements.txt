@@ -4,3 +4,4 @@ argparse
 requests
 json
 paramiko
+pre-commit
