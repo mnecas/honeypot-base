@@ -46,6 +46,7 @@ def get_latest_file(path):
         key=lambda x: int(x.split("-")[0]),
         reverse=True
     )
+    
     if files:
         return files[0]
 
