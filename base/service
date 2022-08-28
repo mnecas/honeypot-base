@@ -1,0 +1,11 @@
+[Unit]
+Description="Base service"
+
+[Service]
+User=root
+WorkingDirectory=/tmp/
+ExecStart=start.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
