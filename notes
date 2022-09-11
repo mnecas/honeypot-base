@@ -1,3 +1,0 @@
-sudo tcpdump -W 5 -C 1 -w capfile -Z root 'tcp'
-sudo tcpdump -w $(date +%Y-%m-%d_%H:%M:%S)_dcn.pcap 'tcp'
-curl -F 'filename=@/home/yourhomedirextory/file.txt' http://yourserver/upload
