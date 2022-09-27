@@ -1,6 +1,6 @@
 ssh/logs/*
 ssh/keys/
-
+base/tcpdump-pid
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

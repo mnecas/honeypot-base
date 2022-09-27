@@ -61,7 +61,12 @@ init(){
     fi
 
     echo "Init of the honeypot"
-    curl -d "type=$HONEYPOT_TYPE&name=$HONEYPOT_NAME" -X POST http://$HONEYPOT_SERVER/api/honeypots
+    init_data=$(curl -d "type=$HONEYPOT_TYPE&name=$HONEYPOT_NAME" -X POST http://$HONEYPOT_SERVER/api/honeypots/)
+    TOKEN=$(echo $init_data | jq -j '.token')
+    ID=$(echo $init_data | jq -j '.id')
+    echo $init_data
+    echo $TOKEN
+    echo $ID
     #curl -F "filename=@$TCPDUMP_FILE" https://$SERVER/honeypot/
 }
 
