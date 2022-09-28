@@ -45,9 +45,22 @@ start_inotify(){
 #     echo "Finished crontab setup"
 # }
 
+send_attack() {
+    echo "Sending data"
+    curl \
+        -H "Authorization: Token $TOKEN" \
+        -H 'Content-Type: application/json' \
+        -d '{"data":{"my_login":"TEST"},"attacker":{"source_addr":"192.168.2.4","source_port":20,"mac":"test"}}' \
+        http://$HONEYPOT_SERVER/api/honeypots/$ID/attack
+}
+
 send_data() {
     echo "Sending data"
-    curl -H 'Content-Disposition:inline;filename=tcpdump.pcap' -F "filename=@$TCPDUMP_FILE" http://$HONEYPOT_SERVER/api/honeypots/1/upload
+    curl \
+        -H "Content-Disposition:inline;filename=tcpdump.pcap" \
+        -H "Authorization: Token $TOKEN" \
+        -F "filename=@$TCPDUMP_FILE" \
+        http://$HONEYPOT_SERVER/api/honeypots/$ID/upload
     kill $(cat tcpdump-pid)
 }
 
@@ -64,10 +77,6 @@ init(){
     init_data=$(curl -d "type=$HONEYPOT_TYPE&name=$HONEYPOT_NAME" -X POST http://$HONEYPOT_SERVER/api/honeypots/)
     TOKEN=$(echo $init_data | jq -j '.token')
     ID=$(echo $init_data | jq -j '.id')
-    echo $init_data
-    echo $TOKEN
-    echo $ID
-    #curl -F "filename=@$TCPDUMP_FILE" https://$SERVER/honeypot/
 }
 
 start_tcpdump_process(){
@@ -78,7 +87,7 @@ start_tcpdump_process(){
 }
 
 start(){
-#    init
+    init
 
     # Start of tcpdump
     start_tcpdump_process
@@ -88,8 +97,8 @@ start(){
 
     # Start inotify
     start_inotify &>> $LOG_PATH/inotify.log &
-    INOTIFY_PID="$!"
-    echo "Started inotify process with PID $INOTIFY_PID"
+    inotify_pid="$!"
+    echo "Started inotify process with PID $inotify_pid"
 
     # Start crontab
     # echo "Started crontab"
