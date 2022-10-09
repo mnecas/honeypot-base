@@ -51,6 +51,11 @@ send_attack() {
         -H "Authorization: Token $TOKEN" \
         -H 'Content-Type: application/json' \
         -d '{"data":{"my_login":"TEST"},"attacker":{"source_addr":"192.168.2.4","source_port":20,"mac":"test"}}' \
+        --connect-timeout 5 \
+        --max-time 10 \
+        --retry 5 \
+        --retry-delay 0 \
+        --retry-max-time 40 \
         http://$HONEYPOT_SERVER/api/honeypots/$ID/attack
 }
 
@@ -60,6 +65,11 @@ send_data() {
         -H "Content-Disposition:inline;filename=tcpdump.pcap" \
         -H "Authorization: Token $TOKEN" \
         -F "filename=@$TCPDUMP_FILE" \
+        --connect-timeout 5 \
+        --max-time 10 \
+        --retry 5 \
+        --retry-delay 0 \
+        --retry-max-time 40 \
         http://$HONEYPOT_SERVER/api/honeypots/$ID/upload
     kill $(cat tcpdump-pid)
 }
