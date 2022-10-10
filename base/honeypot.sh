@@ -21,7 +21,7 @@ start_tcpdump(){
         echo "The file '$TCPDUMP_FILE' exits, removing."
         rm $TCPDUMP_FILE
     fi
-    tcpdump -w $TCPDUMP_FILE $TCPDUMP_FILTER
+    tcpdump -i any -w $TCPDUMP_FILE $TCPDUMP_FILTER
 }
 
 start_inotify(){
@@ -90,7 +90,8 @@ init(){
 }
 
 start_tcpdump_process(){
-    start_tcpdump &>> $LOG_PATH/tcpdump.log &
+    start_tcpdump &
+    # start_tcpdump &>> $LOG_PATH/tcpdump.log &
     TCPDUMP_PID="$!"
     echo "$TCPDUMP_PID" > tcpdump-pid
     echo "Started tcpdump process with PID $TCPDUMP_PID"
@@ -106,7 +107,8 @@ start(){
     sleep .1
 
     # Start inotify
-    start_inotify &>> $LOG_PATH/inotify.log &
+    start_inotify &
+    # start_inotify &>> $LOG_PATH/inotify.log &
     inotify_pid="$!"
     echo "Started inotify process with PID $inotify_pid"
 

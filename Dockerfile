@@ -1,5 +1,6 @@
-FROM quay.io/centos/centos:stream8
+FROM quay.io/fedora/fedora:36
 WORKDIR /honeypot
 COPY . /honeypot/
-RUN yum install jq -y
+USER root
+RUN yum install jq tcpdump inotify-tools util-linux -y
 CMD ["/honeypot/base/honeypot.sh", "start"]
