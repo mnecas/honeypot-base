@@ -1,7 +1,0 @@
-scapy
-time
-argparse
-requests
-json
-paramiko
-pre-commit

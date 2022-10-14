@@ -1,4 +1,4 @@
-export IMG ?= quay.io/mnecas0/honeypot-base
+export IMG ?= quay.io/mnecas0/honeypot
 
 ##@ General
 
@@ -24,10 +24,3 @@ docker-build: ## Build docker image.
 .PHONY: docker-push
 docker-push: ## Push docker image.
 	docker push ${IMG}
-
-##@ Deployment
-.PHONY: install
-install: ## Install honeypot
-	cp honeypot.sh /usr/bin/
-	cp honeypot.service /etc/systemd/system/
-	cp honeypot_inotify.service /etc/systemd/system/
