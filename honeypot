@@ -5,8 +5,7 @@ TCPDUMP_FILE=${TCPDUMP_FILE:-"/tmp/tcpdump.pcap"}
 TCPDUMP_FILTER=${TCPDUMP_FILTER:-'tcp'}
 # Maximum size of file in MiB
 TCPDUMP_MAX_SIZE=${TCPDUMP_MAX_SIZE:-200}
-TCPDUMP_CRONTAB=${TCPDUMP_CRONTAB:-"* * * * *"}
-TCPDUMP_CRONTAB_FILE=${TCPDUMP_CRONTAB_FILE:-"/tmp/honeypot.cron"}
+TCPDUMP_TIMEOUT=${TCPDUMP_TIMEOUT:-5}
 
 HONEYPOT_NAME=${HONEYPOT_NAME:-$(uuidgen)}
 HONEYPOT_TYPE=${HONEYPOT_TYPE:-"general"}
@@ -14,8 +13,6 @@ HONEYPOT_SERVER=${SERVER:-"127.0.0.1:8000"}
 LOG_PATH=/var/log/honeypot
 
 source tools.sh
-
-# counter = 0
 
 start_tcpdump(){
     debug "Starting tcpdump"
@@ -25,42 +22,7 @@ start_tcpdump(){
     fi
     # --print
     # -U = buffer each packet insead of each line
-    # tcpdump -W 5 -C 10 --packet-buffered -i any -w $TCPDUMP_FILE $TCPDUMP_FILTER 
-
-    tcpdump --packet-buffered -i any -w $TCPDUMP_FILE $TCPDUMP_FILTER 
-}
-
-start_inotify(){
-    debug "Starting inotify"
-    # -qq = for quite without modify
-    while inotifywait -qq -e modify "$TCPDUMP_FILE"; do
-        actualsize=$(du -m "$TCPDUMP_FILE" | cut -f1)
-        debug "Size: $actualsize MiB"
-        if [ ! -z $actualsize -a $actualsize -ge $TCPDUMP_MAX_SIZE ]; then
-            debug "Size is over $TCPDUMP_MAX_SIZE megabytes"
-            send_data
-        fi
-    done
-}
-
-start_crontab(){
-    debug "Starting crontab setup"
-    echo "$TCPDUMP_CRONTAB TOKEN=$TOKEN ID=$ID TCPDUMP_FILE=$TCPDUMP_FILE ./honeypot send_data" > $TCPDUMP_CRONTAB_FILE
-    crontab $TCPDUMP_CRONTAB_FILE
-}
-
-send_attack() {
-    debug "Sending attack data"
-    send attack -H 'Content-Type: application/json' -d '{"data":{"my_login":"TEST"},"attacker":{"source_addr":"192.168.2.4","source_port":20,"mac":"test"}}'
-}
-
-send_data() {
-    debug "Sending data"
-    resp=$(send upload -H "Content-Disposition:inline;filename=tcpdump.pcap" -F "filename=@$TCPDUMP_FILE")
-    if [ $resp -eq "201" ];
-    then
-        kill -15 $(cat tcpdump-pid)
-    fi
+    tcpdump -W 1 -C $TCPDUMP_MAX_SIZE -G $TCPDUMP_TIMEOUT --packet-buffered -i any -w $TCPDUMP_FILE $TCPDUMP_FILTER -z $PWD/send_data.sh
 }
 
 init(){
@@ -77,14 +39,6 @@ init(){
     echo "ID=$ID"
 }
 
-start_tcpdump_process(){
-    start_tcpdump &
-    # start_tcpdump &>> $LOG_PATH/tcpdump.log &
-    TCPDUMP_PID="$!"
-    echo "$TCPDUMP_PID" > tcpdump-pid
-    debug "Started tcpdump process with PID $TCPDUMP_PID"
-}
-
 start(){
     # Setup log path
     if [ -d $LOG_PATH ]; then
@@ -95,24 +49,7 @@ start(){
     fi
 
     # Start of tcpdump
-    start_tcpdump_process
-
-    # Wait for TCPDUMP_FILE to be created
-    sleep .1
-
-    # Start inotify
-    start_inotify &
-    # start_inotify &>> $LOG_PATH/inotify.log &
-    inotify_pid="$!"
-    debug "Started inotify process with PID $inotify_pid"
-
-    # Start crontab
-    start_crontab
-
-    while true; do
-        wait -n $TCPDUMP_PID
-        start_tcpdump_process
-    done
+    start_tcpdump
 }
 
 $1 ${@: 2}
