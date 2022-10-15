@@ -8,13 +8,13 @@ DEBUG=${DEBUG:0}
 HONEYPOT_SERVER=${SERVER:-"127.0.0.1:8000"}
 
 err() {
-    echo -e "$RED[ERROR][$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*$ENDCOLOR" >&2
+    echo -e "$RED[$(date +'%Y-%m-%dT%H:%M:%S%z')][ERROR]: $*$ENDCOLOR" >&2
 }
 
 debug() {
     if [[ $DEBUG -gt 0 ]]
     then
-        echo -e "[DEBUG][$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&1
+        echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')][DEBUG]: $*" >&1
     fi
 }
 
