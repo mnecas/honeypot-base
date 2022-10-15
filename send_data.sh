@@ -9,7 +9,7 @@ send_attack() {
 
 send_data() {
     debug "Sending data"
-    send upload -H "Content-Disposition:inline;filename=tcpdump.pcap" -F "filename=@$FILE_NAME"
+    send upload -H "Content-Disposition:inline;filename=$FILE_NAME" -F "filename=@$FILE_NAME"
 }
 
 FILE_NAME="$@"
