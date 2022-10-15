@@ -2,6 +2,8 @@
 
 RED="\e[31m"
 GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
 ENDCOLOR="\e[0m"
 
 DEBUG=${DEBUG:0}
@@ -14,17 +16,18 @@ err() {
 debug() {
     if [[ $DEBUG -gt 0 ]]
     then
-        echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z')][DEBUG]: $*" >&1
+        echo -e "$BLUE[$(date +'%Y-%m-%dT%H:%M:%S%z')][DEBUG]: $*$ENDCOLOR" >&1
     fi
 }
 
 send(){
     endpoint="$1"
     data_params="${@: 2}"
-    debug "SEND: Endpoint: $endpoint"
-    debug "SEND: Data params: $data_params"
+    debug "Endpoint: $endpoint"
+    debug "Data params: $data_params"
     # -w "%{http_code}" \
-    curl \
+    status_code=$(curl \
+        -s \
         -H "Authorization: Token $TOKEN" \
         --connect-timeout 5 \
         --max-time 10 \
@@ -32,7 +35,8 @@ send(){
         --retry-delay 0 \
         --retry-max-time 40 \
         $data_params \
-        http://$HONEYPOT_SERVER/api/honeypots/$ID/$endpoint
+        -w "%{http_code}" \
+        http://$HONEYPOT_SERVER/api/honeypots/$ID/$endpoint)
 }
 
 

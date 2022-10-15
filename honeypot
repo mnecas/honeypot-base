@@ -53,4 +53,5 @@ start(){
     start_tcpdump
 }
 
+# Execute first param as function and pass the rest of the params to it
 $1 ${@: 2}
