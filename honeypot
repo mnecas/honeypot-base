@@ -28,7 +28,7 @@ start_tcpdump(){
 
 init(){
     debug "Init of the honeypot"
-    data=$(curl -s -d "type=$HONEYPOT_TYPE&name=$HONEYPOT_NAME" -X POST http://$HONEYPOT_SERVER/api/honeypots/)
+    data=$(curl -s -d "name=$HONEYPOT_NAME" -X POST http://$HONEYPOT_SERVER/api/honeypots/)
     if [ -z "$data" ]
     then 
         err "Could not get the data."
