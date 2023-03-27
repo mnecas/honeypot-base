@@ -8,7 +8,6 @@ TCPDUMP_MAX_SIZE=${TCPDUMP_MAX_SIZE:-200}
 TCPDUMP_TIMEOUT=${TCPDUMP_TIMEOUT:-5}
 TCPDUMP_EXTRAARGS=${TCPDUMP_EXTRAARGS:""}
 
-HONEYPOT_NAME=${HONEYPOT_NAME:-$(uuidgen)}
 HONEYPOT_TYPE=${HONEYPOT_TYPE:-"general"}
 HONEYPOT_SERVER=${SERVER:-"127.0.0.1:8000"}
 LOG_PATH=/var/log/honeypot
@@ -24,20 +23,6 @@ start_tcpdump(){
     # --print
     # -U = buffer each packet insead of each line
     tcpdump -W 1 -C $TCPDUMP_MAX_SIZE -G $TCPDUMP_TIMEOUT --packet-buffered -i any -w $TCPDUMP_FILE $TCPDUMP_FILTER -z $PWD/send_data.sh $TCPDUMP_EXTRAARGS
-}
-
-init(){
-    debug "Init of the honeypot"
-    data=$(curl -s -d "name=$HONEYPOT_NAME" -X POST http://$HONEYPOT_SERVER/api/honeypots/)
-    if [ -z "$data" ]
-    then 
-        err "Could not get the data."
-        exit 1
-    fi
-    TOKEN=$(echo $data | jq -j '.token')
-    ID=$(echo $data | jq -j '.id')
-    echo "TOKEN=$TOKEN"
-    echo "ID=$ID"
 }
 
 start(){

@@ -1,6 +1,6 @@
-FROM quay.io/fedora/fedora:36
+FROM ubuntu:latest
 WORKDIR /root/
 COPY . .
 USER root
-RUN yum install jq tcpdump inotify-tools util-linux cronie cronie-anacron -y
+RUN apt-get update && apt-get install tcpdump inotify-tools util-linux -y
 CMD ["./honeypot", "start"]
