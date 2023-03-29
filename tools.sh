@@ -36,7 +36,7 @@ send(){
         --retry-max-time 40 \
         $data_params \
         -w "%{http_code}" \
-        http://$HONEYPOT_SERVER/api/honeypots/$ID/$endpoint)
+        http://$HONEYPOT_SERVER/api/$ID/$endpoint)
 }
 
 
