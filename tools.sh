@@ -26,7 +26,7 @@ send(){
     debug "Endpoint: $endpoint"
     debug "Data params: $data_params"
     # -w "%{http_code}" \
-    status_code=$(curl \
+    curl \
         -s \
         -H "Authorization: Token $TOKEN" \
         --connect-timeout 5 \
@@ -36,7 +36,7 @@ send(){
         --retry-max-time 40 \
         $data_params \
         -w "%{http_code}" \
-        http://$HONEYPOT_SERVER/api/$ID/$endpoint)
+        http://$HONEYPOT_SERVER/api/$ID/$endpoint
 }
 
 
