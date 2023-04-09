@@ -26,16 +26,28 @@ send(){
     debug "Endpoint: $endpoint"
     debug "Data params: $data_params"
     # -w "%{http_code}" \
+    echo """
     curl \
-        -s \
         -H "Authorization: Token $TOKEN" \
+        --fail \
         --connect-timeout 5 \
         --max-time 10 \
-        --retry 5 \
+        --retry 10 \
         --retry-delay 0 \
         --retry-max-time 40 \
+        --retry-all-errors \
         $data_params \
-        -w "%{http_code}" \
+        http://$HONEYPOT_SERVER/api/$ID/$endpoint"""
+    curl \
+        -H "Authorization: Token $TOKEN" \
+        --fail \
+        --connect-timeout 5 \
+        --max-time 10 \
+        --retry 10 \
+        --retry-delay 0 \
+        --retry-max-time 40 \
+        --retry-all-errors \
+        $data_params \
         http://$HONEYPOT_SERVER/api/$ID/$endpoint
 }
 

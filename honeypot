@@ -23,7 +23,7 @@ start_tcpdump(){
     fi
     # --print
     # -U = buffer each packet insead of each line
-    tcpdump -W 1 -C $TCPDUMP_MAX_SIZE -G $TCPDUMP_TIMEOUT --packet-buffered -i any -w $TCPDUMP_FILE $TCPDUMP_FILTER -Z root -z $PWD/send_data.sh $TCPDUMP_EXTRAARGS
+    tcpdump -W 1 -C $TCPDUMP_MAX_SIZE -G $TCPDUMP_TIMEOUT --packet-buffered -w $TCPDUMP_FILE $TCPDUMP_FILTER -Z root -z $PWD/send_data.sh $TCPDUMP_EXTRAARGS
 }
 
 start(){
